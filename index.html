@@ -1,7 +1,7 @@
 
 <!-- Claude Code -->
-   <!DOCTYPE html>
-   <html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -130,11 +130,11 @@
             text-align: center;
             z-index: 100;
         }
-    </style>          
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">Connected Network - Vibe Coding with Claude</h1>
+        <h1 class="title">Connected Network</h1>
         <p class="description">Interactive circles with dynamic connections</p>
     </div>
 
@@ -206,22 +206,65 @@
         }
 
         // Add interactive hover effects
-        circles.forEach(circle => {
+        circles.forEach((circle, index) => {
+            let hoverAnimation = null;
+            
             circle.element.addEventListener('mouseenter', () => {
                 // Highlight connected lines
                 lines.forEach(line => {
                     line.style.background = 'linear-gradient(90deg, rgba(255, 107, 107, 0.8), rgba(78, 205, 196, 0.8))';
                     line.style.height = '3px';
                 });
+                
+                // Start hover movement animation
+                let startTime = Date.now();
+                const originalX = parseFloat(circle.element.style.left);
+                const originalY = parseFloat(circle.element.style.top);
+                
+                function hoverMove() {
+                    const elapsed = Date.now() - startTime;
+                    const moveX = Math.sin(elapsed * 0.01) * 15;
+                    const moveY = Math.cos(elapsed * 0.008) * 12;
+                    
+                    circle.element.style.left = (originalX + moveX) + 'px';
+                    circle.element.style.top = (originalY + moveY) + 'px';
+                    
+                    // Update circle position for line calculations
+                    circle.x = originalX + moveX + 30;
+                    circle.y = originalY + moveY + 30;
+                    
+                    hoverAnimation = requestAnimationFrame(hoverMove);
+                }
+                
+                hoverMove();
             });
             
             circle.element.addEventListener('mouseleave', () => {
+                // Stop hover animation
+                if (hoverAnimation) {
+                    cancelAnimationFrame(hoverAnimation);
+                    hoverAnimation = null;
+                }
+                
+                // Reset circle to original position
+                const originalX = circles[index].originalX || parseFloat(circle.element.style.left);
+                const originalY = circles[index].originalY || parseFloat(circle.element.style.top);
+                
+                circle.element.style.left = originalX + 'px';
+                circle.element.style.top = originalY + 'px';
+                circle.x = originalX + 30;
+                circle.y = originalY + 30;
+                
                 // Reset lines
                 lines.forEach(line => {
                     line.style.background = 'linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1))';
                     line.style.height = '2px';
                 });
             });
+            
+            // Store original positions
+            circle.originalX = parseFloat(circle.element.style.left);
+            circle.originalY = parseFloat(circle.element.style.top);
         });
 
         // Animate circles with slight movement
