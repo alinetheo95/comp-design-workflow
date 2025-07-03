@@ -12,7 +12,7 @@
             padding: 0;
             height: 100vh;
             overflow: hidden;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(90deg, #D2691E, #FF6347, #FF1493, #DA1884, #8B4A9C, #6A4C93);
             font-family: Arial, sans-serif;
             position: relative;
         }
@@ -28,7 +28,7 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background: linear-gradient(45deg, #FF6347, #FF1493);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
             animation: float 4s ease-in-out infinite;
             cursor: pointer;
@@ -53,23 +53,33 @@
         }
 
         .circle:nth-child(2n) {
-            background: linear-gradient(45deg, #a8edea, #fed6e3);
+            background: linear-gradient(45deg, #D2691E, #FF6347);
             animation-delay: -1s;
         }
 
         .circle:nth-child(3n) {
-            background: linear-gradient(45deg, #ffecd2, #fcb69f);
+            background: linear-gradient(45deg, #FF1493, #DA1884);
             animation-delay: -2s;
         }
 
         .circle:nth-child(4n) {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #DA1884, #8B4A9C);
             animation-delay: -3s;
         }
 
         .circle:nth-child(5n) {
-            background: linear-gradient(45deg, #f093fb, #f5576c);
+            background: linear-gradient(45deg, #8B4A9C, #6A4C93);
             animation-delay: -0.5s;
+        }
+
+        .circle:nth-child(6n) {
+            background: linear-gradient(45deg, #FF6347, #DA1884);
+            animation-delay: -1.5s;
+        }
+
+        .circle:nth-child(7n) {
+            background: linear-gradient(45deg, #D2691E, #8B4A9C);
+            animation-delay: -2.5s;
         }
 
         @keyframes float {
@@ -90,15 +100,24 @@
         .line {
             position: absolute;
             height: 2px;
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+            background: linear-gradient(90deg, rgba(255, 99, 71, 0.6), rgba(255, 20, 147, 0.6));
             transform-origin: left center;
             animation: pulse-line 3s ease-in-out infinite;
             z-index: -1;
+            border-radius: 1px;
+        }
+
+        .line:nth-child(odd) {
+            background: linear-gradient(90deg, rgba(218, 24, 132, 0.6), rgba(139, 74, 156, 0.6));
+        }
+
+        .line:nth-child(even) {
+            background: linear-gradient(90deg, rgba(210, 105, 30, 0.6), rgba(255, 99, 71, 0.6));
         }
 
         @keyframes pulse-line {
             0%, 100% {
-                opacity: 0.3;
+                opacity: 0.4;
                 filter: blur(0px);
             }
             50% {
@@ -125,17 +144,18 @@
             bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255, 255, 255, 0.9);
             font-size: 16px;
             text-align: center;
             z-index: 100;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1 class="title">Connected Network</h1>
-        <p class="description">Interactive circles with dynamic connections</p>
+        <p class="description">Interactive circles with vibrant color scheme</p>
     </div>
 
     <script>
@@ -208,17 +228,27 @@
         // Add interactive hover effects
         circles.forEach(circle => {
             circle.element.addEventListener('mouseenter', () => {
-                // Highlight connected lines
-                lines.forEach(line => {
-                    line.style.background = 'linear-gradient(90deg, rgba(255, 107, 107, 0.8), rgba(78, 205, 196, 0.8))';
-                    line.style.height = '3px';
+                // Highlight connected lines with vibrant colors
+                lines.forEach((line, index) => {
+                    if (index % 3 === 0) {
+                        line.style.background = 'linear-gradient(90deg, rgba(255, 99, 71, 0.9), rgba(255, 20, 147, 0.9))';
+                    } else if (index % 3 === 1) {
+                        line.style.background = 'linear-gradient(90deg, rgba(218, 24, 132, 0.9), rgba(139, 74, 156, 0.9))';
+                    } else {
+                        line.style.background = 'linear-gradient(90deg, rgba(210, 105, 30, 0.9), rgba(106, 76, 147, 0.9))';
+                    }
+                    line.style.height = '4px';
                 });
             });
             
             circle.element.addEventListener('mouseleave', () => {
-                // Reset lines
-                lines.forEach(line => {
-                    line.style.background = 'linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1))';
+                // Reset lines to original colors
+                lines.forEach((line, index) => {
+                    if (index % 2 === 0) {
+                        line.style.background = 'linear-gradient(90deg, rgba(218, 24, 132, 0.6), rgba(139, 74, 156, 0.6))';
+                    } else {
+                        line.style.background = 'linear-gradient(90deg, rgba(210, 105, 30, 0.6), rgba(255, 99, 71, 0.6))';
+                    }
                     line.style.height = '2px';
                 });
             });
