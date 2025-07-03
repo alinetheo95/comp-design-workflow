@@ -74,16 +74,16 @@
 
         @keyframes float {
             0%, 100% {
-                transform: translateY(0px);
+                transform: translateY(0px) rotate(0deg);
             }
             25% {
-                transform: translateY(-10px);
+                transform: translateY(-10px) rotate(90deg);
             }
             50% {
-                transform: translateY(-5px);
+                transform: translateY(-5px) rotate(180deg);
             }
             75% {
-                transform: translateY(-15px);
+                transform: translateY(-15px) rotate(270deg);
             }
         }
 
@@ -205,126 +205,79 @@
             }
         }
 
-        // Mouse interaction variables
-        let mouseX = 0;
-        let mouseY = 0;
-        const pushForce = 80; // Distance at which mouse affects circles
-        const pushStrength = 0.3; // How strongly circles are pushed
-
-        // Track mouse position
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-        });
-
         // Add interactive hover effects
         circles.forEach((circle, index) => {
+            let hoverAnimation = null;
+            
             circle.element.addEventListener('mouseenter', () => {
                 // Highlight connected lines
                 lines.forEach(line => {
                     line.style.background = 'linear-gradient(90deg, rgba(255, 107, 107, 0.8), rgba(78, 205, 196, 0.8))';
                     line.style.height = '3px';
                 });
+                
+                // Start hover movement animation
+                let startTime = Date.now();
+                const originalX = parseFloat(circle.element.style.left);
+                const originalY = parseFloat(circle.element.style.top);
+                
+                function hoverMove() {
+                    const elapsed = Date.now() - startTime;
+                    const moveX = Math.sin(elapsed * 0.01) * 15;
+                    const moveY = Math.cos(elapsed * 0.008) * 12;
+                    
+                    circle.element.style.left = (originalX + moveX) + 'px';
+                    circle.element.style.top = (originalY + moveY) + 'px';
+                    
+                    // Update circle position for line calculations
+                    circle.x = originalX + moveX + 30;
+                    circle.y = originalY + moveY + 30;
+                    
+                    hoverAnimation = requestAnimationFrame(hoverMove);
+                }
+                
+                hoverMove();
             });
             
             circle.element.addEventListener('mouseleave', () => {
+                // Stop hover animation
+                if (hoverAnimation) {
+                    cancelAnimationFrame(hoverAnimation);
+                    hoverAnimation = null;
+                }
+                
+                // Reset circle to original position
+                const originalX = circles[index].originalX || parseFloat(circle.element.style.left);
+                const originalY = circles[index].originalY || parseFloat(circle.element.style.top);
+                
+                circle.element.style.left = originalX + 'px';
+                circle.element.style.top = originalY + 'px';
+                circle.x = originalX + 30;
+                circle.y = originalY + 30;
+                
                 // Reset lines
                 lines.forEach(line => {
                     line.style.background = 'linear-gradient(90deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1))';
                     line.style.height = '2px';
                 });
             });
-
-            // Store original and current positions
+            
+            // Store original positions
             circle.originalX = parseFloat(circle.element.style.left);
             circle.originalY = parseFloat(circle.element.style.top);
-            circle.currentX = circle.originalX;
-            circle.currentY = circle.originalY;
-            circle.velocityX = 0;
-            circle.velocityY = 0;
         });
 
-        // Animate circles with mouse interaction
+        // Animate circles with slight movement
         function animateCircles() {
             circles.forEach((circle, index) => {
-                // Calculate distance from mouse to circle center
-                const circleCenterX = circle.currentX + 30;
-                const circleCenterY = circle.currentY + 30;
-                const distanceToMouse = Math.sqrt(
-                    Math.pow(mouseX - circleCenterX, 2) + 
-                    Math.pow(mouseY - circleCenterY, 2)
-                );
-
-                // If mouse is close enough, push the circle away
-                if (distanceToMouse < pushForce && distanceToMouse > 0) {
-                    const angle = Math.atan2(circleCenterY - mouseY, circleCenterX - mouseX);
-                    const force = (pushForce - distanceToMouse) / pushForce;
-                    
-                    circle.velocityX += Math.cos(angle) * force * pushStrength;
-                    circle.velocityY += Math.sin(angle) * force * pushStrength;
-                }
-
-                // Apply velocity with damping
-                circle.currentX += circle.velocityX;
-                circle.currentY += circle.velocityY;
-                circle.velocityX *= 0.95; // Damping
-                circle.velocityY *= 0.95;
-
-                // Keep circles within bounds
-                const margin = 50;
-                if (circle.currentX < margin) {
-                    circle.currentX = margin;
-                    circle.velocityX = Math.abs(circle.velocityX) * 0.5;
-                }
-                if (circle.currentX > window.innerWidth - 60 - margin) {
-                    circle.currentX = window.innerWidth - 60 - margin;
-                    circle.velocityX = -Math.abs(circle.velocityX) * 0.5;
-                }
-                if (circle.currentY < margin) {
-                    circle.currentY = margin;
-                    circle.velocityY = Math.abs(circle.velocityY) * 0.5;
-                }
-                if (circle.currentY > window.innerHeight - 60 - margin) {
-                    circle.currentY = window.innerHeight - 60 - margin;
-                    circle.velocityY = -Math.abs(circle.velocityY) * 0.5;
-                }
-
-                // Gentle pull back towards original position
-                const returnForce = 0.02;
-                const deltaX = circle.originalX - circle.currentX;
-                const deltaY = circle.originalY - circle.currentY;
-                circle.velocityX += deltaX * returnForce;
-                circle.velocityY += deltaY * returnForce;
-
-                // Update circle position
-                circle.element.style.left = circle.currentX + 'px';
-                circle.element.style.top = circle.currentY + 'px';
-
-                // Update position for line calculations
-                circle.x = circle.currentX + 30;
-                circle.y = circle.currentY + 30;
+                const time = Date.now() * 0.001;
+                const offsetX = Math.sin(time + index) * 20;
+                const offsetY = Math.cos(time + index * 0.5) * 15;
+                
+                circle.element.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
             });
-
-            // Update connection lines
-            updateLines();
             
             requestAnimationFrame(animateCircles);
-        }
-
-        // Function to update connection lines
-        function updateLines() {
-            lines.forEach(line => line.remove());
-            lines.length = 0;
-            
-            for (let i = 0; i < circles.length; i++) {
-                for (let j = i + 1; j < circles.length; j++) {
-                    const dist = distance(circles[i], circles[j]);
-                    if (dist < maxDistance) {
-                        const line = createLine(circles[i], circles[j]);
-                        lines.push(line);
-                    }
-                }
-            }
         }
 
         animateCircles();
