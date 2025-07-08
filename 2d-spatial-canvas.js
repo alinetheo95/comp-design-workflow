@@ -1,159 +1,50 @@
-// The setup code section runs once at launch
-function setup() {
-  // prepare a 2-D canvas
-  // the variables define the x and y axes of the canvas
-  createCanvas(640, 480);   
-}
+// 2D Drawing Sketch - using p5.js instance mode
+var sketch1 = function(p) {
+  // All variables are scoped to this instance
+  var canvasWidth = 800;
+  var canvasHeight = 400;
+  var gridSpacing = 40;
+  var canvas;
 
-// The draw code section runs 60 frames per second 
-function draw() {
-  // this variable defines the background color - it is set to blue
-  background(0,0,250);
-  // you add your drawing code below
-}
+  p.setup = function() {
+    canvas = p.createCanvas(canvasWidth, canvasHeight);
+    canvas.parent('canvas-container-1');
+  };
 
-function setup() {
-  createCanvas(640, 480);
-}
+  p.draw = function() {
+    p.background(250);
+    drawGrid();
+    drawPrimitives();
+  };
 
-function draw() {
-  background(240);
-  
-  // rectangle: x, y, width, height
-  rect(50, 90, 150, 70);
-  
-  // ellipse: x, y, width, height
-  ellipse(250, 300, 200, 200);
-  
-  // line: x1, y1, x2, y2
-  line(300, 50, 500, 430);
-  
-  // triangle: x1, y1, x2, y2, x3, y3
-  triangle(450, 50, 600, 50, 535, 300);
-}
-function setup() {
-  createCanvas(640, 480);
-}
-
-function draw() {
-  background(240);
-  
-  // draw 10 circles in a row
-  for (let i = 0; i < 10; i++) {
-    // calculate x position for each circle
-    let x = i * 60 + 30;
-    // draw circle at calculated position
-    fill(255,255,0)
-    ellipse(x, height/2, 40, 40);
-  }
-}
-
-function setup() {
-  createCanvas(640, 480);
-}
-
-function draw() {
-  background(240);
-  
-  // draw 10 circles in a row
-  for (let i = 0; i < 10; i++) {
-    // calculate x position for each circle
-    let x = i * 60 + 30;
-    // draw circle at calculated position
-    ellipse(x, height/2, 40, 40);
-  }
-}
-
-function setup() {
-  createCanvas(640, 480);
-}
-
-function draw() {
-  background(240);
-  
-  // call our custom function with different parameters
-  drawStar(100, 100, 30);
-  drawStar(200, 200, 50);
-  drawStar(500, 300, 150);
-  drawStar(250, 400, 80);
-}
-
-// custom function to draw a bespoke shape
-function drawStar(x, y, size) {
-  // draw a star at the specified position and size
-  fill(255, 255, 0);
-  ellipse(x, y, size, size);
-  // add some details to make it look more star-like
-  fill(255, 200, 0);
-  ellipse(x, y, size/2, size/2);
-}
-
-// declare arrays to store multiple values
-let xPositions = [100, 200, 300, 400];
-let yPositions = [150, 250, 350, 450];
-
-function setup() {
-  createCanvas(640, 480);
-}
-
-function draw() {
-  background(240);
-  
-  // loop through all positions in the arrays
-  for (let i = 0; i < xPositions.length; i++) {
-    // draw a circle at each stored position
-    ellipse(xPositions[i], yPositions[i], 30, 30);
-  }
-}
-// define a class for creating circle objects
-class Circle {
-  constructor(x, y, size) {
-    // initialize circle properties
-    this.x = x;
-    this.y = y;
-    this.size = size;
-    this.speed = 2;
-  }
-  
-  // method to move the circle
-  move() {
-    // update x position to move circle
-    this.x = this.x + this.speed;
-    
-    // wrap around when circle goes off screen
-    if (this.x > width + this.size) {
-      this.x = -this.size;
+  function drawGrid() {
+    p.stroke(200);
+    p.strokeWeight(1);
+    for (var x = 0; x <= p.width; x += gridSpacing) {
+      p.line(x, 0, x, p.height);
+    }
+    for (var y = 0; y <= p.height; y += gridSpacing) {
+      p.line(0, y, p.width, y);
     }
   }
-  
-  // method to display the circle
-  display() {
-    // draw the circle at its current position
-    ellipse(this.x, this.y, this.size, this.size);
+
+  function drawPrimitives() {
+    // Rectangle
+    p.fill(255, 100, 100);
+    p.rect(120, 80, 100, 60);
+    // Ellipse
+    p.fill(100, 180, 255);
+    p.ellipse(350, 200, 90, 90);
+    // Line
+    p.stroke(80, 200, 120);
+    p.strokeWeight(4);
+    p.line(500, 100, 700, 300);
+    // Triangle
+    p.noStroke();
+    p.fill(255, 220, 80);
+    p.triangle(600, 80, 750, 60, 700, 200);
   }
-}
+};
 
-// create an instance of the Circle class
-let myCircle;
-
-function setup() {
-  createCanvas(640, 480);
-  // initialize circle object
-  myCircle = new Circle(10, height/2-80, 40);
-  myCircle2 = new Circle(100, height/2, 60);
-  myCircle3 = new Circle(200, height/2+80, 80);
-}
-
-function draw() {
-  background(240);
-  
-  // call methods on the circle object
-  myCircle.move();
-  myCircle.display();
-  
-  myCircle2.move();
-  myCircle2.display();
-  
-  myCircle3.move();
-  myCircle3.display();
-}
+// Create the instance
+var myp5_1 = new p5(sketch1, 'canvas-container-1'); 
